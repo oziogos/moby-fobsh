@@ -2,6 +2,9 @@
 # image build and dettached container deployment
 docker build -t c7_fobsh:latest . --build-arg CP2K_VERSION=flavoured-cptk-code_extension_V2_hetero ; docker rmi $(docker images -qa -f dangling=true) ; docker run --name fobsh -d -ti c7_fobsh ; docker attach fobsh
 
+# once the container is running, execute HAB79 overlap test:
+$ /work/HAB79/test.sh
+
 # the ctrl+p ctrl+q sequence from inside the container dettaches the container without stopping it
 
 # clean up dettached container:
