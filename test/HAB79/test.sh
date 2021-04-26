@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd $(dirname $0)
+
 # create pot and psf files
 /deploy/utils/gaff_batch.py
 
