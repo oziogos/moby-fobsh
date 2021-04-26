@@ -1,0 +1,30 @@
+
+# Compiler
+CC       = gcc
+CPP      = 
+FC       = gfortran
+# Linker
+LD       = gfortran
+# Archiver
+AR       = ar -r
+RANLIB   = ranlib
+
+# FFTW
+FFTWPATH = /deploy/lib/fftw-install
+FFTW_INC = $(FFTWPATH)/include
+FFTW_LIB = $(FFTWPATH)/lib
+# Lapack
+LAPACK_LIB = /deploy/lib/lapack-install
+
+# Compiler flags
+WFLAGS   = -Waliasing -Wampersand -Wc-binding-type -Wintrinsic-shadow \
+           -Wintrinsics-std -Wline-truncation -Wno-tabs -Wtarget-lifetime \
+           -Wunderflow -Wunused-but-set-variable -Wunused-variable \
+           -Wconversion
+DFLAGS   = -D__FFTW3
+FCFLAGS  = -O2 -std=f2003 -fimplicit-none -ffree-form -fno-omit-frame-pointer \
+           -march=native -ffast-math -funroll-loops -ftree-vectorize \
+           -I$(FFTW_INC) $(DFLAGS) $(WFLAGS)
+# Linker flags
+LDFLAGS  = $(FCFLAGS) 
+LIBS     = -L$(FFTW_LIB) -L$(LAPACK_LIB) -llapack -lrefblas -lfftw3 -lstdc++
