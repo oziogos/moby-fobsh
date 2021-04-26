@@ -1,0 +1,160 @@
+
+&GLOBAL
+	BLACS_GRID             SQUARE
+	PREFERRED_FFT_LIBRARY  FFTW
+	PRINT_LEVEL            LOW
+	PROGRAM_NAME           CP2K
+	PROJECT_NAME           run
+	RUN_TYPE               MD
+&END GLOBAL
+&MOTION
+	&MD
+		ENSEMBLE      NVE
+		STEPS         0
+		TIMESTEP      0.1
+		TEMPERATURE   300
+		&PRINT
+			&PROGRAM_RUN_INFO LOW 
+			&END PROGRAM_RUN_INFO  
+		&END PRINT
+	&END MD
+	&PRINT
+		&TRAJECTORY  LOW
+			FORMAT  XYZ
+			&EACH
+				MD          1
+			&END EACH
+		&END TRAJECTORY
+		&RESTART_HISTORY OFF
+		&END RESTART_HISTORY
+		&RESTART ON
+			&EACH
+				MD 1
+			&END EACH
+		&END RESTART
+		&MIXED_ENERGIES OFF
+		&END MIXED_ENERGIES
+	&END PRINT
+&END MOTION
+&MULTIPLE_FORCE_EVALS
+	FORCE_EVAL_ORDER 1..3
+	MULTIPLE_SUBSYS
+&END
+&FORCE_EVAL
+	METHOD MIXED
+	&MIXED
+		MIXING_TYPE ADIABATIC
+		&ADIABATIC
+			METHOD_PROPAGATION                    FSSH
+			INITIALIZATION                        DIABATIC
+			FIRST_DIABAT                          2
+			FIRST_ADIABAT                         1
+			SEED                                  123456
+			REPRESENTATION                        DIABATIC_BASIS
+			NUCLEAR_TIMESTEP  [fs]                0.1
+			ELECTRONIC_PARTIAL_STEP               5
+			NUMBER_DIABATIC_STATES                2
+			NUMBER_ORBITALS                       1
+			CENTER_OF_MASS                        T
+			PRINT_MORE                            F
+			&OPTIMIZATION
+				DO_SPEEDUP_LJ                         T
+				DO_SPEEDUP_INTRA                      T
+				SURF_HOP_CHOICE                       TRIVIAL_HOP_CORRECT
+				REORDERING_STATES_USING_OVERLAP       T
+				RK_PROPAGATION                        DIABATIC_RK_FAST
+			&END OPTIMIZATION
+			&DECOHERENCE
+				DECOHERENCE_CORRECTIONS               DAMPING
+				DECO_TIME                             EDC
+				EDC_C                                 1.0
+				EDC_E0                                0.0
+				TEMPERATURE_FG_WIDTH                  300
+				THRESHOLD_TAU_FORCES                  1e-20
+				SPURIOUS_TRANSFER_CORR                T
+				DECOHERENCE_CRITERION                 1e-06
+			&END DECOHERENCE
+			&ENERGY_CONSERVATION
+				METHOD_RESCALING                      NACV
+				METHOD_ADIABATIC_NACV                 FAST
+				METHOD_REVERSAL                       ALWAYS
+			&END ENERGY_CONSERVATION
+			METHOD_COUPLING                       AOM
+			&AOM
+				STO_DR                                0.1
+				STO_EXPONENTS                         _sto_exp_
+				MULTIPLE_TIME_STEP                    1
+				NUMBER_AOM_ATOMS_PER_SITE             _atoms_per_site_
+				CUT_OFF_BETWEEN_SITES [angstrom]      20.0
+				CUT_OFF_CONNECTIVITY                  3.5
+				SCALING_FACTOR   [hartree]            1.0
+				CBAR                                  0.5082
+				ATOMIC_OVERLAP_CUTOFF                 1e-17
+				ANALYTICS                             F
+				NACV_INCREMENT   [bohr]               0.0018872589
+				@INCLUDE AOM_COEFF.include
+			&END AOM
+			&PRINT
+				&COEFFICIENTS  LOW
+					&EACH
+						MD          1
+					&END EACH
+				&END COEFFICIENTS
+				&PSEUDO_HAMILTONIAN
+					UNIT     hartree
+					&EACH
+						MD          1
+					&END EACH
+				&END PSEUDO_HAMILTONIAN
+				&SH_INFO
+					&EACH
+						MD          1
+					&END EACH
+				&END SH_INFO
+				&ADIABAT_ENERGIES
+					&EACH
+						MD          1
+					&END EACH
+				&END ADIABAT_ENERGIES
+				&SITE_ENERGIES
+					&EACH
+						MD          1
+					&END EACH
+				&END SITE_ENERGIES
+				&OFF_DIAGONALS
+					&EACH
+						MD          1
+					&END EACH
+				&END OFF_DIAGONALS
+				&POPULATIONS  LOW
+					&EACH
+						MD          1
+					&END EACH
+				&END POPULATIONS
+				&ADIAB_POPULATIONS  LOW
+					&EACH
+						MD          1
+					&END EACH
+				&END ADIAB_POPULATIONS
+			&END PRINT
+		&END ADIABATIC
+		&PRINT
+			&PROGRAM_RUN_INFO OFF
+				&EACH
+					MD 1
+				&END EACH
+			&END PROGRAM_RUN_INFO
+		&END PRINT
+	&END MIXED
+	@INCLUDE DECOMP.include
+	&SUBSYS
+		&VELOCITY
+			@INCLUDE VELOC.init
+		&END VELOCITY
+		@INCLUDE TOPOLOGY-NEUTRAL-ONLY.include
+	&END SUBSYS
+&END FORCE_EVAL
+@SET DO_LJ  1
+@INCLUDE FORCE_EVAL.include
+@SET DO_LJ  0
+@INCLUDE FORCE_EVAL.include

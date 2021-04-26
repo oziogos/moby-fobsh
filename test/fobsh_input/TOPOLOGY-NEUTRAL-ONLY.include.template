@@ -1,0 +1,25 @@
+
+&CELL
+	ABC                    _A_	_B_	_C_
+	PERIODIC               NONE
+&END CELL
+
+&TOPOLOGY
+	COORD_FILE_FORMAT XYZ
+	COORD_FILE_NAME   _xyz_file_
+	NUMBER_OF_ATOMS   _atoms_
+	CONN_FILE_FORMAT  MOL_SET
+	&MOL_SET
+		&MOLECULE
+		NMOL              2
+		CONN_FILE_NAME    ../topologies/_psf_
+		CONN_FILE_FORMAT  PSF
+		&END MOLECULE
+	&END MOL_SET
+	&DUMP_PSF
+		&EACH
+			MD          1
+		&END EACH
+		FILENAME ./input
+	&END DUMP_PSF
+&END TOPOLOGY
