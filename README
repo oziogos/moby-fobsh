@@ -1,15 +1,20 @@
+A containerised deployment of the FOB-SH code using Docker. Includes:
+- AmberTools20
+- pyAOMlite
+- AOM overlap regression test suite based on the HAB79 dataset
+- archive-mediated interface with CP2K:FOB-SH
 
-# image build and dettached container deployment
-docker build -t c7_fobsh:latest . --build-arg CP2K_VERSION=flavoured-cptk-code_extension_V2_hetero ; docker rmi $(docker images -qa -f dangling=true) ; docker run --name fobsh -d -ti c7_fobsh ; docker attach fobsh
+Image build and detached container deployment
+$ docker build -t c7_fobsh:latest . --build-arg CP2K_VERSION=flavoured-cptk-code_extension_V2_hetero ; docker rmi $(docker images -qa -f dangling=true) ; docker run --name fobsh -d -ti c7_fobsh ; docker attach fobsh
 
-# once the container is running, execute HAB79 overlap test:
+Once the container is running, execute HAB79 overlap test:
 $ /work/HAB79/test.sh
 
-# the ctrl+p ctrl+q sequence from inside the container dettaches the container without stopping it
+! The ctrl+p+ctrl+q sequence from inside the container dettaches the container without stopping it !
 
-# clean up dettached container:
-docker stop fobsh
-docker rm fobsh
+Clean up detached container:
+$ docker stop fobsh
+$ docker rm fobsh
 
 # download libraries - deprecated: don't use!
 docker run --network host --name alpine_libdl -d -ti alpine
