@@ -1,0 +1,18 @@
+
+# image build and dettached container deployment
+docker build -t c7_fobsh:latest . --build-arg CP2K_VERSION=flavoured-cptk-code_extension_V2_hetero ; docker rmi $(docker images -qa -f dangling=true) ; docker run --name fobsh -d -ti c7_fobsh ; docker attach fobsh
+
+# the ctrl+p ctrl+q sequence from inside the container dettaches the container without stopping it
+
+# clean up dettached container:
+docker stop fobsh
+docker rm fobsh
+
+# download libraries - deprecated: don't use!
+docker run --network host --name alpine_libdl -d -ti alpine
+docker exec -ti alpine_libdl wget http://www.fftw.org/fftw-3.3.5.tar.gz
+docker cp alpine_libdl:/fftw-3.3.5.tar.gz lib/
+docker exec -ti alpine_libdl wget https://codeload.github.com/Reference-LAPACK/lapack/tar.gz/refs/tags/v3.6.1
+docker cp alpine_libdl:v3.6.1 lib/lapack-3.6.1.tgz
+docker stop alpine_libdl
+docker rm alpine_libdl
