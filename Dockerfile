@@ -37,6 +37,6 @@ COPY test/HAB79/single_molecules/*.mol2 /work/HAB79/single_molecules/
 COPY test/HAB79/README /work/HAB79/
 COPY test/HAB79/test.sh /work/HAB79/
 RUN chmod +x /work/HAB79/test.sh
-COPY test/fobsh_input/*template* /deploy/config
+COPY test/fobsh_input/*template* /deploy/config/
 # start!
 CMD source /opt/conda/etc/profile.d/conda.sh; conda activate AmberTools20; bash
